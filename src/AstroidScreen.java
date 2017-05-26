@@ -15,10 +15,10 @@ public class AstroidScreen extends JPanel implements Runnable{
 	boolean gameLoop;
 	final int W = Toolkit.getDefaultToolkit().getScreenSize().width;
 	final int H = Toolkit.getDefaultToolkit().getScreenSize().height;
-	
+
 	Ship player = new Ship(W/2,H/2);
-	ArrayList<GameObject> sprites = new ArrayList<GameObject>();
-	
+	protected static ArrayList<GameObject> sprites = new ArrayList<GameObject>();
+
 	protected AstroidScreen(){
 		panel();
 		add();
@@ -43,7 +43,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 			public void actionPerformed(ActionEvent e) {
 				player.angleShiftL = true;
 			}
-			
+
 		});
 		getActionMap().put("rA", new AbstractAction(){
 
@@ -51,7 +51,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 			public void actionPerformed(ActionEvent e) {
 				player.angleShiftL = false;
 			}
-			
+
 		});
 		getActionMap().put("D", new AbstractAction(){
 
@@ -59,7 +59,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 			public void actionPerformed(ActionEvent e) {
 				player.angleShiftR = true;
 			}
-			
+
 		});
 		getActionMap().put("rD", new AbstractAction(){
 
@@ -67,7 +67,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 			public void actionPerformed(ActionEvent e) {
 				player.angleShiftR = false;
 			}
-			
+
 		});
 		getActionMap().put("W", new AbstractAction(){
 
@@ -75,7 +75,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 			public void actionPerformed(ActionEvent e) {
 				player.thrust = true;
 			}
-			
+
 		});
 		getActionMap().put("rW", new AbstractAction(){
 
@@ -83,7 +83,15 @@ public class AstroidScreen extends JPanel implements Runnable{
 			public void actionPerformed(ActionEvent e) {
 				player.thrust = false;
 			}
-			
+
+		});
+		getActionMap().put("SPACE", new AbstractAction(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				player.shoot();
+			}
+
 		});
 	}
 	void add(){
@@ -100,18 +108,32 @@ public class AstroidScreen extends JPanel implements Runnable{
 			public void run(){
 				while(gameLoop){
 					//border
-					if(player.getX()<0){
-						player.x = W;
+					synchronized(sprites){
+						for(int index = 0; index < sprites.size(); index++){
+							GameObject o = sprites.get(index);
+							if(o instanceof Projectile){
+								if(o.getX() < 0 || o.getX() > W || o.getY() < 0 || o.getY() > H){
+									sprites.remove(o);
+								}
+							}
+							if(o instanceof Ship){
+								if(o.getX()<0){
+									o.x = W;
+								}
+								if(o.getX()>W){
+									o.x = 0;
+								}
+								if(o.getY()<0){
+									o.y = H;
+								}
+								if(o.getY()>H){
+									o.y = 0;
+								}
+							}
+						}
 					}
-					if(player.getX()>W){
-						player.x = 0;
-					}
-					if(player.getY()<0){
-						player.y = H;
-					}
-					if(player.getY()>H){
-						player.y = 0;
-					}
+					//System.out.println(sprites.size());
+
 					try{
 						Thread.sleep(1);
 					}catch(Exception e) { }
@@ -129,9 +151,9 @@ public class AstroidScreen extends JPanel implements Runnable{
 		frame.setVisible(true);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		
-		
+
+
+
 	}
 	public void run(){
 		while(gameLoop){
@@ -139,25 +161,23 @@ public class AstroidScreen extends JPanel implements Runnable{
 			try{
 				Thread.sleep(10);
 			}catch(Exception e) { }
-			}
+		}
 	}
 	void update(){
 		move();
 		repaint();
 	}
 	void move(){
-		synchronized(sprites){
-			for(GameObject o : sprites){
-				o.move();
-			}
+		for(int index = 0; index < sprites.size(); index++){
+			GameObject o = sprites.get(index);
+			o.move();
 		}
 	}
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		synchronized(sprites){
-			for(GameObject o : sprites){
-				o.draw(g);
-			}
+		for(int index = 0; index < sprites.size(); index++){
+			GameObject o = sprites.get(index);
+			o.draw(g);
 		}
 	}
 }

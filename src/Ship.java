@@ -6,13 +6,14 @@ import java.awt.geom.AffineTransform;
 public class Ship extends GameObject{
 	final int W = Texture.ship.getWidth()*2;
 	final int H = Texture.ship.getHeight()*2;
-	final int SPEED = 10;
+	final int SPEED = 12;
+	final double ACCEL = .015;
 	protected double angle = 0;
 
 	boolean angleShiftR = false;
 	boolean angleShiftL = false;
 	boolean thrust = false;
-
+	
 	protected Ship(int x, int y) {
 		super(x, y);
 		Thread motion = new Thread(new Runnable(){
@@ -36,29 +37,29 @@ public class Ship extends GameObject{
 					if(thrust){
 						if(dx!=SPEED*Math.sin(angle)){
 							if(dx>SPEED*Math.sin(angle))
-								dx-=.02;
+								dx-=ACCEL;
 							else
-								dx+=.02;
+								dx+=ACCEL;
 						}
 						if(dy!=-SPEED*Math.cos(angle)){
 							if(dy>-SPEED*Math.cos(angle))
-								dy-=.02;
+								dy-=ACCEL;
 							else
-								dy+=.02;
+								dy+=ACCEL;
 						}
 						
 					}else{
 						if(dx!=0){
 							if(dx>0)
-								dx-=.02;
+								dx-=ACCEL;
 							else
-								dx+=.02;
+								dx+=ACCEL;
 						}
 						if(dy!=0){
 							if(dy>0)
-								dy-=.02;
+								dy-=ACCEL;
 							else
-								dy+=.02;
+								dy+=ACCEL;
 						}
 					}
 
@@ -70,7 +71,9 @@ public class Ship extends GameObject{
 		});
 		motion.start();
 	}
-
+	void shoot(){
+		AstroidScreen.sprites.add(new Projectile(x+W/2,y+(H*.3),angle,SPEED*Math.sin(angle),-SPEED*Math.cos(angle)));
+	}
 	@Override
 	void draw(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
