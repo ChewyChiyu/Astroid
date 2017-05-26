@@ -7,13 +7,13 @@ public class Ship extends GameObject{
 	final int W = Texture.ship.getWidth()*2;
 	final int H = Texture.ship.getHeight()*2;
 	final int SPEED = 12;
-	final double ACCEL = .015;
+	final double ACCEL = .02;
 	protected double angle = 0;
 
 	boolean angleShiftR = false;
 	boolean angleShiftL = false;
 	boolean thrust = false;
-	
+	boolean shooting = true;
 	protected Ship(int x, int y) {
 		super(x, y);
 		Thread motion = new Thread(new Runnable(){

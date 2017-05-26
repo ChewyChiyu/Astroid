@@ -36,6 +36,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 		getInputMap().put(KeyStroke.getKeyStroke("released W"), "rW");
 
 		getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "SPACE");
+		getInputMap().put(KeyStroke.getKeyStroke("released SPACE"), "rSPACE");
 
 		getActionMap().put("A", new AbstractAction(){
 
@@ -89,7 +90,18 @@ public class AstroidScreen extends JPanel implements Runnable{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				player.shoot();
+				if(player.shooting){
+					player.shooting = false;
+					player.shoot();
+				}
+			}
+
+		});
+		getActionMap().put("rSPACE", new AbstractAction(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				player.shooting = true;
 			}
 
 		});
