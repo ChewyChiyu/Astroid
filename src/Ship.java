@@ -6,7 +6,7 @@ import java.awt.geom.AffineTransform;
 public class Ship extends GameObject{
 	final int W = Texture.ship.getWidth()*2;
 	final int H = Texture.ship.getHeight()*2;
-	final int SPEED = 12;
+	final int SPEED = 9;
 	final double ACCEL = .02;
 	protected double angle = 0;
 
@@ -23,13 +23,13 @@ public class Ship extends GameObject{
 
 					if(angleShiftR){
 						angle+=Math.PI/500;
-						if(angle>=360){
+						if(angle>=Math.PI*2){
 							angle = 0;
 						}
 					}
 					if(angleShiftL){
 						angle-=Math.PI/500;
-						if(angle<=-360){
+						if(angle<=-Math.PI*2){
 							angle = 0;
 						}
 					}
