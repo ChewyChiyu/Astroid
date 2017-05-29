@@ -229,7 +229,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 						for(int index = 0; index < sprites.size(); index++){
 							if(sprites.get(index) instanceof Asteroid){
 								Asteroid o = (Asteroid) sprites.get(index);
-
+								//asteroid bounce check
 								for(int index2 = 0; index2 < sprites.size(); index2++){
 									if(sprites.get(index2) instanceof Asteroid){
 										Asteroid o2 = (Asteroid) sprites.get(index2);
@@ -254,7 +254,13 @@ public class AstroidScreen extends JPanel implements Runnable{
 										}
 									}
 								}
+								
+								//check for player hit
+								if(o.getBounds().intersects(player.getBounds()))
+								sprites.remove(player);
+								
 							}
+							
 						}
 					}
 
