@@ -27,6 +27,7 @@ public class Asteroid extends GameObject{
 		    }
 		
 		}
+		r.setSize(W-15, H-15);
 		Thread motion = new Thread(new Runnable(){
 			public void run(){
 				while(this!=null){
@@ -42,7 +43,7 @@ public class Asteroid extends GameObject{
 		motion.start();
 		
 	}
-
+	
 	@Override
 	void draw(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
@@ -52,5 +53,4 @@ public class Asteroid extends GameObject{
 		g2d.drawImage(img, -W/2 ,-H/2, W, H, null);
 		g2d.setTransform(a);
 	}
-	
 }

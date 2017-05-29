@@ -1,7 +1,9 @@
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 public abstract class GameObject {
 	double x,y,dx,dy;
+	Rectangle r = new Rectangle();
 	protected GameObject(double x, double y){
 		this.x = x ;
 		this.y = y;
@@ -33,6 +35,11 @@ public abstract class GameObject {
 	void move(){
 		x += dx;
 		y += dy;
+	}
+	Rectangle getBounds(){
+		r.x = (int) x + 15;
+		r.y = (int) y + 15;
+		return r;
 	}
 	abstract void draw(Graphics g);
 	

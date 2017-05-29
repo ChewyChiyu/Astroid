@@ -22,5 +22,4 @@ public class Projectile extends GameObject{
 		g2d.fillRect(0, 0, 3, 10);
 		g2d.setTransform(a);
 	}
-
 }

@@ -16,7 +16,8 @@ public class AstroidScreen extends JPanel implements Runnable{
 	boolean gameLoop;
 	final int W = Toolkit.getDefaultToolkit().getScreenSize().width;
 	final int H = Toolkit.getDefaultToolkit().getScreenSize().height;
-
+	final int MAX_ASTEROID = 15;
+	double FRICTION = .02;
 	Ship player = new Ship(W/2,H/2);
 	protected static ArrayList<GameObject> sprites = new ArrayList<GameObject>();
 
@@ -130,7 +131,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 									sprites.remove(o);
 								}
 							}
-							
+
 							if(o instanceof Ship){
 								if(o.getX()<0){
 									o.x = W;
@@ -158,8 +159,11 @@ public class AstroidScreen extends JPanel implements Runnable{
 		Thread addAsteroid = new Thread(new Runnable(){
 			public void run(){
 				while(gameLoop){
+					if(numberOfAsteroids()>=MAX_ASTEROID){
+						continue;
+					}
 					for(int index = 0; index < 3; index++){
-						
+
 						BufferedImage img = null;
 						int initialX = 0, initialY = 0; double initialDX = 0, initialDY = 0;
 						switch((int)(Math.random()*3)){
@@ -203,10 +207,10 @@ public class AstroidScreen extends JPanel implements Runnable{
 							initialDY = ((int)(Math.random()*2)==1)?Math.random()*.1:-Math.random()+.1;
 							break;
 						}
-						
+
 						sprites.add(new Asteroid(initialX,initialY,initialDX,initialDY,true,img));
 
-						
+
 					}
 					try{
 						Thread.sleep(2000);
@@ -240,7 +244,100 @@ public class AstroidScreen extends JPanel implements Runnable{
 	}
 	void update(){
 		move();
+		bound();
 		repaint();
+	}
+	void bound(){
+		for(int index = 0; index < sprites.size(); index++){
+			GameObject o = sprites.get(index);
+			if(o instanceof Asteroid){
+				for(int index2 = 0; index2 < sprites.size(); index2++){
+					GameObject o2 = sprites.get(index2);
+					if(o.equals(o2)){
+						continue;
+					}
+					if(o2 instanceof Asteroid){
+						if(o.getBounds().intersects(o2.getBounds())){
+							//space them apart first
+							o.setX(-o.getDX()*2);
+							//o2.setX(-o2.getDX()*2);
+							o.setY(-o.getDY()*2);
+							//o2.setY(-o2.getDY()*2);
+							if(((Asteroid)o).big){
+								FRICTION = .6;
+							}else{
+								FRICTION = .4;
+							}
+							
+							if(o.getDX()!=0){
+								if(o.getDX()>0){
+									o.setDX(o.getDX()-FRICTION);
+								}
+								if(o.getDX()<0){
+									o.setDX(o.getDX()+FRICTION);
+								}
+							}
+							if(o.getDY()!=0){
+								if(o.getDY()>0){
+									o.setDY(o.getDY()-FRICTION);
+								}
+								if(o.getDY()<0){
+									o.setDY(o.getDY()+FRICTION);
+								}
+							}
+							if(((Asteroid)o2).big){
+								FRICTION = .6;
+							}else{
+								FRICTION = .4;
+							}
+							
+							if(o2.getDX()!=0){
+								if(o2.getDX()>0){
+									o2.setDX(o2.getDX()-FRICTION);
+								}
+								if(o2.getDX()<0){
+									o2.setDX(o2.getDX()+FRICTION);
+								}
+							}
+							if(o2.getDY()!=0){
+								if(o2.getDY()>0){
+									o2.setDY(o2.getDY()-FRICTION);
+								}
+								if(o2.getDY()<0){
+									o2.setDY(o2.getDY()+FRICTION);
+								}
+							}
+							
+							if(((Asteroid) o).big&&!((Asteroid) o2).big){
+								o2.setDX(-o.getDX());
+								//o2.setDX(-o2.getDX());
+								o2.setDY(-o.getDY());
+								//o2.setDY(-o2.getDY());
+							}else{
+								o.setDX(-o.getDX());
+								o2.setDX(-o2.getDX());
+								o.setDY(-o.getDY());
+								o2.setDY(-o2.getDY());
+							
+							}
+							
+						
+							
+						}
+					}
+				}
+			}
+		}
+	}
+	int numberOfAsteroids(){
+		int index = 0;
+		for(int a = 0; a < sprites.size(); a++){
+			GameObject o = sprites.get(a);
+			if(o instanceof Asteroid){
+				index++;
+			}
+		}
+		return index;
 	}
 	void move(){
 		for(int index = 0; index < sprites.size(); index++){

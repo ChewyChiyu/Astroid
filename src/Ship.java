@@ -8,6 +8,7 @@ public class Ship extends GameObject{
 	final int H = Texture.ship.getHeight()*2;
 	final int SPEED = 9;
 	final double ACCEL = .02;
+	final double FRICTION = ACCEL;
 	protected double angle = 0;
 
 	boolean angleShiftR = false;
@@ -16,6 +17,7 @@ public class Ship extends GameObject{
 	boolean shooting = true;
 	protected Ship(int x, int y) {
 		super(x, y);
+		r.setSize(W, H);
 		Thread motion = new Thread(new Runnable(){
 			public void run(){
 				while(this!=null){
@@ -51,15 +53,15 @@ public class Ship extends GameObject{
 					}else{
 						if(dx!=0){
 							if(dx>0)
-								dx-=ACCEL;
+								dx-=FRICTION;
 							else
-								dx+=ACCEL;
+								dx+=FRICTION;
 						}
 						if(dy!=0){
 							if(dy>0)
-								dy-=ACCEL;
+								dy-=FRICTION;
 							else
-								dy+=ACCEL;
+								dy+=FRICTION;
 						}
 					}
 
@@ -83,6 +85,4 @@ public class Ship extends GameObject{
 		g2d.drawImage(Texture.ship.getScaledInstance(Texture.ship.getWidth()*2, Texture.ship.getHeight()*2, Image.SCALE_DEFAULT),  - W/2,  - H/2, null);
 		g2d.setTransform(a);
 	}
-
-
 }
