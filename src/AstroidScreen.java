@@ -207,8 +207,13 @@ public class AstroidScreen extends JPanel implements Runnable{
 							initialDY = ((int)(Math.random()*2)==1)?Math.random()*.1:-Math.random()+.1;
 							break;
 						}
-
-						sprites.add(new Asteroid(initialX,initialY,initialDX,initialDY,true,img));
+						boolean big;
+						if(initialDX+initialDY<=.3){
+							big = true;
+						}else{
+							big = false;
+						}
+						sprites.add(new Asteroid(initialX,initialY,initialDX,initialDY,big,img));
 
 
 					}
@@ -248,81 +253,83 @@ public class AstroidScreen extends JPanel implements Runnable{
 		repaint();
 	}
 	void bound(){
-		for(int index = 0; index < sprites.size(); index++){
-			GameObject o = sprites.get(index);
-			if(o instanceof Asteroid){
-				for(int index2 = 0; index2 < sprites.size(); index2++){
-					GameObject o2 = sprites.get(index2);
-					if(o.equals(o2)){
-						continue;
-					}
-					if(o2 instanceof Asteroid){
-						if(o.getBounds().intersects(o2.getBounds())){
-							//space them apart first
-							o.setX(-o.getDX()*2);
-							//o2.setX(-o2.getDX()*2);
-							o.setY(-o.getDY()*2);
-							//o2.setY(-o2.getDY()*2);
-							if(((Asteroid)o).big){
-								FRICTION = .6;
-							}else{
-								FRICTION = .4;
+		synchronized(sprites){
+			for(int index = 0; index < sprites.size(); index++){
+				GameObject o = sprites.get(index);
+				if(o instanceof Asteroid){
+					for(int index2 = 0; index2 < sprites.size(); index2++){
+						GameObject o2 = sprites.get(index2);
+						if(o.equals(o2)){
+							continue;
+						}
+						if(o2 instanceof Asteroid){
+							if(o.getBounds().intersects(o2.getBounds())){
+								//space them apart first
+								o.setX(-o.getDX());
+								o2.setX(-o2.getDX());
+								o.setY(-o.getDY());
+								o2.setY(-o2.getDY());
+
+
+								if(((Asteroid)o).big){
+									FRICTION = .08;
+								}else{
+									FRICTION = .06;
+								}
+
+								if(o.getDX()!=0){
+									if(o.getDX()>0){
+										o.setDX(o.getDX()-FRICTION);
+									}
+									if(o.getDX()<0){
+										o.setDX(o.getDX()+FRICTION);
+									}
+								}
+								if(o.getDY()!=0){
+									if(o.getDY()>0){
+										o.setDY(o.getDY()-FRICTION);
+									}
+									if(o.getDY()<0){
+										o.setDY(o.getDY()+FRICTION);
+									}
+								}
+								if(((Asteroid)o2).big){
+									FRICTION = .08;
+								}else{
+									FRICTION = .06;
+								}
+
+								if(o2.getDX()!=0){
+									if(o2.getDX()>0){
+										o2.setDX(o2.getDX()-FRICTION);
+									}
+									if(o2.getDX()<0){
+										o2.setDX(o2.getDX()+FRICTION);
+									}
+								}
+								if(o2.getDY()!=0){
+									if(o2.getDY()>0){
+										o2.setDY(o2.getDY()-FRICTION);
+									}
+									if(o2.getDY()<0){
+										o2.setDY(o2.getDY()+FRICTION);
+									}
+								}
+
+								if(((Asteroid) o2).big&&!((Asteroid) o).big){
+									o.setDX(-o.getDX());
+									o.setDY(-o.getDY());
+								}else{
+									o.setDX(-o.getDX()/2);
+									o2.setDX(-o2.getDX()/2);
+									o.setDY(-o.getDY());
+									o2.setDY(-o2.getDY());
+
+								}
+
+
+
 							}
-							
-							if(o.getDX()!=0){
-								if(o.getDX()>0){
-									o.setDX(o.getDX()-FRICTION);
-								}
-								if(o.getDX()<0){
-									o.setDX(o.getDX()+FRICTION);
-								}
-							}
-							if(o.getDY()!=0){
-								if(o.getDY()>0){
-									o.setDY(o.getDY()-FRICTION);
-								}
-								if(o.getDY()<0){
-									o.setDY(o.getDY()+FRICTION);
-								}
-							}
-							if(((Asteroid)o2).big){
-								FRICTION = .6;
-							}else{
-								FRICTION = .4;
-							}
-							
-							if(o2.getDX()!=0){
-								if(o2.getDX()>0){
-									o2.setDX(o2.getDX()-FRICTION);
-								}
-								if(o2.getDX()<0){
-									o2.setDX(o2.getDX()+FRICTION);
-								}
-							}
-							if(o2.getDY()!=0){
-								if(o2.getDY()>0){
-									o2.setDY(o2.getDY()-FRICTION);
-								}
-								if(o2.getDY()<0){
-									o2.setDY(o2.getDY()+FRICTION);
-								}
-							}
-							
-							if(((Asteroid) o).big&&!((Asteroid) o2).big){
-								o2.setDX(-o.getDX());
-								//o2.setDX(-o2.getDX());
-								o2.setDY(-o.getDY());
-								//o2.setDY(-o2.getDY());
-							}else{
-								o.setDX(-o.getDX());
-								o2.setDX(-o2.getDX());
-								o.setDY(-o.getDY());
-								o2.setDY(-o2.getDY());
-							
-							}
-							
-						
-							
 						}
 					}
 				}

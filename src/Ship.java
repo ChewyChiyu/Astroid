@@ -1,6 +1,7 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
 public class Ship extends GameObject{
@@ -84,5 +85,10 @@ public class Ship extends GameObject{
 		g2d.rotate(angle);
 		g2d.drawImage(Texture.ship.getScaledInstance(Texture.ship.getWidth()*2, Texture.ship.getHeight()*2, Image.SCALE_DEFAULT),  - W/2,  - H/2, null);
 		g2d.setTransform(a);
+	}
+	@Override
+	Rectangle getBounds() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

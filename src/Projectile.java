@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
 public class Projectile extends GameObject{
@@ -21,5 +22,11 @@ public class Projectile extends GameObject{
 		g2d.setColor(Color.WHITE);
 		g2d.fillRect(0, 0, 3, 10);
 		g2d.setTransform(a);
+	}
+
+	@Override
+	Rectangle getBounds() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

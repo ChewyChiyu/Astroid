@@ -1,5 +1,6 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
@@ -16,18 +17,19 @@ public class Asteroid extends GameObject{
 		this.img = img;
 		this.dx = dx;
 		this.dy = dy;
-		if(big){
 			//max is like 2
-			if(dx+dy<=.3){
+			if(big){
 				W = (int) (img.getWidth()*1.2);
 				H = (int) (img.getHeight()*1.2);
 			}else{
 				W = (int) (img.getWidth()*.7);
 				H = (int) (img.getHeight()*.7);
 		    }
-		
-		}
-		r.setSize(W-15, H-15);
+			if(big){
+				r.setSize(W-10, H-10);
+				}else{
+					r.setSize(W-15, H-15);
+				}
 		Thread motion = new Thread(new Runnable(){
 			public void run(){
 				while(this!=null){
@@ -52,5 +54,18 @@ public class Asteroid extends GameObject{
 		g2d.rotate(angle);
 		g2d.drawImage(img, -W/2 ,-H/2, W, H, null);
 		g2d.setTransform(a);
+
+	}
+
+	@Override
+	Rectangle getBounds() {
+		if(big){
+		r.x = (int) x + 10;
+		r.y = (int) y + 10;
+		}else{
+			r.x = (int) x + 15;
+			r.y = (int) y + 15;
+		}
+		return r;
 	}
 }

@@ -36,11 +36,7 @@ public abstract class GameObject {
 		x += dx;
 		y += dy;
 	}
-	Rectangle getBounds(){
-		r.x = (int) x + 15;
-		r.y = (int) y + 15;
-		return r;
-	}
+	abstract Rectangle getBounds();
 	abstract void draw(Graphics g);
 	
 }
