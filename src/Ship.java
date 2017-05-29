@@ -88,7 +88,8 @@ public class Ship extends GameObject{
 	}
 	@Override
 	Rectangle getBounds() {
-		// TODO Auto-generated method stub
-		return null;
+		r.setLocation((int)x, (int)y);
+		return r;
 	}
+
 }

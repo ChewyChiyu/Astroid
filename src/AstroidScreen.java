@@ -16,7 +16,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 	boolean gameLoop;
 	final int W = Toolkit.getDefaultToolkit().getScreenSize().width;
 	final int H = Toolkit.getDefaultToolkit().getScreenSize().height;
-	final int MAX_ASTEROID = 15;
+	final int MAX_ASTEROID = 30;
 	double FRICTION = .02;
 	Ship player = new Ship(W/2,H/2);
 	protected static ArrayList<GameObject> sprites = new ArrayList<GameObject>();
@@ -125,7 +125,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 					//border
 					synchronized(sprites){
 						for(int index = 0; index < sprites.size(); index++){
-							GameObject o = sprites.get(index);
+							GameObject o = sprites.get(index);	
 							if(o instanceof Projectile || o instanceof Asteroid){
 								if(o.getX() < -100 || o.getX() > W+100 || o.getY() < -100 || o.getY() > H+100){
 									sprites.remove(o);
@@ -159,70 +159,114 @@ public class AstroidScreen extends JPanel implements Runnable{
 		Thread addAsteroid = new Thread(new Runnable(){
 			public void run(){
 				while(gameLoop){
-					if(numberOfAsteroids()>=MAX_ASTEROID){
-						continue;
+					if(numberOfAsteroids()<=MAX_ASTEROID){
+						for(int index = 0; index < 3; index++){
+
+							BufferedImage img = null;
+							int initialX = 0, initialY = 0; double initialDX = 0, initialDY = 0;
+							switch((int)(Math.random()*3)){
+							case 0:
+								img = Texture.asteroidBig1;
+								break;
+							case 1:
+								img = Texture.asteroidBig2;
+								break;
+							case 2:
+								img = Texture.asteroidBig3;
+								break;
+							}
+							switch((int)(Math.random()*4)){
+							case 0:
+								//top
+								initialY = 1;
+								initialX = (int)(Math.random()*W);
+								initialDX = ((int)(Math.random()*2)==1)?Math.random()*.1:-Math.random()+.1;
+								initialDY = Math.random()+.1;
+								break;
+							case 1:
+								//floor
+								initialY = H-1;
+								initialX = (int)(Math.random()*W);
+								initialDX = ((int)(Math.random()*2)==1)?Math.random()*.1:-Math.random()+.1;
+								initialDY = -Math.random()+.1;
+								break;
+							case 2:
+								//left side
+								initialY = (int)(Math.random()*H);
+								initialX = 1;
+								initialDX = Math.random()+.1;
+								initialDY = ((int)(Math.random()*2)==1)?Math.random()*.1:-Math.random()+.1;
+								break;
+							case 3:
+								//right side
+								initialY = (int)(Math.random()*H);
+								initialX = W-1;
+								initialDX = -Math.random()-.1;
+								initialDY = ((int)(Math.random()*2)==1)?Math.random()*.1:-Math.random()+.1;
+								break;
+							}
+							boolean big;
+							if(initialDX+initialDY<=.3){
+								big = true;
+							}else{
+								big = false;
+							}
+							sprites.add(new Asteroid(initialX,initialY,initialDX,initialDY,big,img));
+
+
+						}
+						try{
+							Thread.sleep(2000);
+						}catch(Exception e) { }
 					}
-					for(int index = 0; index < 3; index++){
+				}
+			}
+		});
+		Thread boundCheck = new Thread(new Runnable(){
+			public void run(){
+				while(gameLoop){
+					synchronized(sprites){
+						for(int index = 0; index < sprites.size(); index++){
+							if(sprites.get(index) instanceof Asteroid){
+								Asteroid o = (Asteroid) sprites.get(index);
 
-						BufferedImage img = null;
-						int initialX = 0, initialY = 0; double initialDX = 0, initialDY = 0;
-						switch((int)(Math.random()*3)){
-						case 0:
-							img = Texture.asteroidBig1;
-							break;
-						case 1:
-							img = Texture.asteroidBig2;
-							break;
-						case 2:
-							img = Texture.asteroidBig3;
-							break;
-						}
-						switch((int)(Math.random()*4)){
-						case 0:
-							//top
-							initialY = 1;
-							initialX = (int)(Math.random()*W);
-							initialDX = ((int)(Math.random()*2)==1)?Math.random()*.1:-Math.random()+.1;
-							initialDY = Math.random()+.1;
-							break;
-						case 1:
-							//floor
-							initialY = H-1;
-							initialX = (int)(Math.random()*W);
-							initialDX = ((int)(Math.random()*2)==1)?Math.random()*.1:-Math.random()+.1;
-							initialDY = -Math.random()+.1;
-							break;
-						case 2:
-							//left side
-							initialY = (int)(Math.random()*H);
-							initialX = 1;
-							initialDX = Math.random()+.1;
-							initialDY = ((int)(Math.random()*2)==1)?Math.random()*.1:-Math.random()+.1;
-							break;
-						case 3:
-							//right side
-							initialY = (int)(Math.random()*H);
-							initialX = W-1;
-							initialDX = -Math.random()-.1;
-							initialDY = ((int)(Math.random()*2)==1)?Math.random()*.1:-Math.random()+.1;
-							break;
-						}
-						boolean big;
-						if(initialDX+initialDY<=.3){
-							big = true;
-						}else{
-							big = false;
-						}
-						sprites.add(new Asteroid(initialX,initialY,initialDX,initialDY,big,img));
+								for(int index2 = 0; index2 < sprites.size(); index2++){
+									if(sprites.get(index2) instanceof Asteroid){
+										Asteroid o2 = (Asteroid) sprites.get(index2);
+										if(o.equals(o2)){
+											continue;
+										}
+										if(o.getBounds().intersects(o2.getBounds()) || o.getBounds().contains(o2.getBounds())){		
 
-
+										if (o.big&&!o2.big){
+												o.setDX(o.getDX()+(o2.getDX()*.1));
+												o.setDY(o.getDY()+(o2.getDY()*.1));
+												o2.setDX(o2.getDX()*.9);
+												o2.setDY(o2.getDY()*.9);
+											}else{
+												o.setDX(o.getDX()+(o2.getDX()*.3));
+												o.setDY(o.getDY()+(o2.getDY()*.3));
+												o2.setDX(o2.getDX()*.7);
+												o2.setDY(o2.getDY()*.7);
+												}
+//											o.setX(o.getDX()*.1);
+//											o.setY(o.getDY()*.1);
+										}
+									}
+								}
+							}
+						}
 					}
+
+
+
 					try{
-						Thread.sleep(2000);
+						//Thread.sleep(1);
 					}catch(Exception e) { }
 				}
 			}
 		});
+		boundCheck.start();
 		addAsteroid.start();
 		manage.start();
 	}
@@ -249,92 +293,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 	}
 	void update(){
 		move();
-		bound();
 		repaint();
-	}
-	void bound(){
-		synchronized(sprites){
-			for(int index = 0; index < sprites.size(); index++){
-				GameObject o = sprites.get(index);
-				if(o instanceof Asteroid){
-					for(int index2 = 0; index2 < sprites.size(); index2++){
-						GameObject o2 = sprites.get(index2);
-						if(o.equals(o2)){
-							continue;
-						}
-						if(o2 instanceof Asteroid){
-							if(o.getBounds().intersects(o2.getBounds())){
-								//space them apart first
-								o.setX(-o.getDX());
-								o2.setX(-o2.getDX());
-								o.setY(-o.getDY());
-								o2.setY(-o2.getDY());
-
-
-								if(((Asteroid)o).big){
-									FRICTION = .08;
-								}else{
-									FRICTION = .06;
-								}
-
-								if(o.getDX()!=0){
-									if(o.getDX()>0){
-										o.setDX(o.getDX()-FRICTION);
-									}
-									if(o.getDX()<0){
-										o.setDX(o.getDX()+FRICTION);
-									}
-								}
-								if(o.getDY()!=0){
-									if(o.getDY()>0){
-										o.setDY(o.getDY()-FRICTION);
-									}
-									if(o.getDY()<0){
-										o.setDY(o.getDY()+FRICTION);
-									}
-								}
-								if(((Asteroid)o2).big){
-									FRICTION = .08;
-								}else{
-									FRICTION = .06;
-								}
-
-								if(o2.getDX()!=0){
-									if(o2.getDX()>0){
-										o2.setDX(o2.getDX()-FRICTION);
-									}
-									if(o2.getDX()<0){
-										o2.setDX(o2.getDX()+FRICTION);
-									}
-								}
-								if(o2.getDY()!=0){
-									if(o2.getDY()>0){
-										o2.setDY(o2.getDY()-FRICTION);
-									}
-									if(o2.getDY()<0){
-										o2.setDY(o2.getDY()+FRICTION);
-									}
-								}
-
-								if(((Asteroid) o2).big&&!((Asteroid) o).big){
-									o.setDX(-o.getDX());
-									o.setDY(-o.getDY());
-								}else{
-									o.setDX(-o.getDX()/2);
-									o2.setDX(-o2.getDX()/2);
-									o.setDY(-o.getDY());
-									o2.setDY(-o2.getDY());
-
-								}
-
-
-
-							}
-						}
-					}
-				}
-			}
-		}
 	}
 	int numberOfAsteroids(){
 		int index = 0;

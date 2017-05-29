@@ -11,6 +11,7 @@ public class Projectile extends GameObject{
 		this.angle = angle;
 		this.dx = dx;
 		this.dy = dy;
+		r.setSize(10, 10);
 	}
 	
 	@Override
@@ -26,7 +27,11 @@ public class Projectile extends GameObject{
 
 	@Override
 	Rectangle getBounds() {
-		// TODO Auto-generated method stub
-		return null;
+		r.setLocation((int)x, (int)y);
+		return r;
 	}
+
+
+
+	
 }
