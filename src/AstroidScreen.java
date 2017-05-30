@@ -295,6 +295,15 @@ public class AstroidScreen extends JPanel implements Runnable{
 									}
 									if(o2 instanceof Asteroid || o2 instanceof Enemy){
 										if(o.getBounds().intersects(o2.getBounds())){
+											//only respawns Asteroids if big
+											if(o2 instanceof Asteroid && ((Asteroid)o2).big){
+												sprites.add(new Asteroid(o2.getX()+((Asteroid)o2).W, o2.getY(), o2.getDX()/2, o2.getDY()/2, false, ((Asteroid)o2).img));
+												sprites.add(new Asteroid(o2.getX(), o2.getY(), o2.getDX()/2, o2.getDY()/2, false, ((Asteroid)o2).img));
+
+												
+											}
+											
+											
 											sprites.remove(o2);
 											sprites.remove(o);
 											score+=200;
