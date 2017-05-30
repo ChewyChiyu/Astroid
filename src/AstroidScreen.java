@@ -236,20 +236,18 @@ public class AstroidScreen extends JPanel implements Runnable{
 										if(o.equals(o2)){
 											continue;
 										}
-										if(o.getBounds().intersects(o2.getBounds()) || o.getBounds().contains(o2.getBounds())){		
-
+										if(o.getBounds().intersects(o2.getBounds()) || o2.getBounds().intersects(o.getBounds()) ){		
 										if (o.big&&!o2.big){
-												o.setDX(o.getDX()+(o2.getDX()*.1));
-												o.setDY(o.getDY()+(o2.getDY()*.1));
-												o2.setDX(o2.getDX()*.9);
-												o2.setDY(o2.getDY()*.9);
+												o2.setDX(o2.getDX()+(o.getDX()*.3));
+												o2.setDY(o2.getDY()+(o.getDY()*.3));
+												o.setDX(o.getDX()*.7);
+												o.setDY(o.getDY()*.7);
 											}else{
-												o.setDX(o.getDX()+(o2.getDX()*.3));
-												o.setDY(o.getDY()+(o2.getDY()*.3));
-												o2.setDX(o2.getDX()*.7);
-												o2.setDY(o2.getDY()*.7);
+												o.setDX(o.getDX()+(o2.getDX()*.5));
+												o.setDY(o.getDY()+(o2.getDY()*.5));
+												o2.setDX(o2.getDX()*.5);
+												o2.setDY(o2.getDY()*.5);
 												}
-											
 										}
 									}
 								}
@@ -269,7 +267,12 @@ public class AstroidScreen extends JPanel implements Runnable{
 										Asteroid a = (Asteroid) sprites.get(index2);
 										if(p.getBounds().intersects(a.getBounds())){
 											sprites.remove(p);
+											if(a.big){
+											sprites.add(new Asteroid(a.getX()+a.W/2,a.getY(),a.getDX(),a.getDY(),false,a.img));
+											sprites.add(new Asteroid(a.getX(),a.getY(),a.getDX(),a.getDY(),false,a.img));
+											}
 											sprites.remove(a);
+											
 										}
 									}
 								}
@@ -284,7 +287,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 
 
 					try{
-						//Thread.sleep(1);
+						Thread.sleep(1);
 					}catch(Exception e) { }
 				}
 			}
@@ -318,6 +321,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 		move();
 		repaint();
 	}
+	
 	int numberOfAsteroids(){
 		int index = 0;
 		for(int a = 0; a < sprites.size(); a++){
