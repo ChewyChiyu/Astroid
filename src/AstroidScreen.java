@@ -249,8 +249,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 												o2.setDX(o2.getDX()*.7);
 												o2.setDY(o2.getDY()*.7);
 												}
-//											o.setX(o.getDX()*.1);
-//											o.setY(o.getDY()*.1);
+											
 										}
 									}
 								}
@@ -260,6 +259,24 @@ public class AstroidScreen extends JPanel implements Runnable{
 								sprites.remove(player);
 								
 							}
+							
+							
+							//laser detection
+							if(sprites.get(index) instanceof Projectile){
+								Projectile p = (Projectile) sprites.get(index);
+								for(int index2 = 0; index2 < sprites.size(); index2++){
+									if(sprites.get(index2) instanceof Asteroid){
+										Asteroid a = (Asteroid) sprites.get(index2);
+										if(p.getBounds().intersects(a.getBounds())){
+											sprites.remove(p);
+											sprites.remove(a);
+										}
+									}
+								}
+							}
+							
+							
+							
 							
 						}
 					}
