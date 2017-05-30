@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -17,7 +19,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 	final int W = Toolkit.getDefaultToolkit().getScreenSize().width;
 	final int H = Toolkit.getDefaultToolkit().getScreenSize().height;
 	final int MAX_ASTEROID = 30;
-	double FRICTION = .02;
+	int livesLeft = 5;
 	Ship player = new Ship(W/2,H/2);
 	protected static ArrayList<GameObject> sprites = new ArrayList<GameObject>();
 
@@ -92,7 +94,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(player.shooting){
+				if(player.shooting && sprites.contains(player)){
 					player.shooting = false;
 					player.shoot();
 				}
@@ -237,25 +239,27 @@ public class AstroidScreen extends JPanel implements Runnable{
 											continue;
 										}
 										if(o.getBounds().intersects(o2.getBounds()) || o2.getBounds().intersects(o.getBounds()) ){		
-										if (o.big&&!o2.big){
-												o2.setDX(o2.getDX()+(o.getDX()*.3));
-												o2.setDY(o2.getDY()+(o.getDY()*.3));
-												o.setDX(o.getDX()*.7);
-												o.setDY(o.getDY()*.7);
+											if (o.big&&!o2.big){
+												o2.setDX(o2.getDX()+(o.getDX()*.5));
+												o2.setDY(o2.getDY()+(o.getDY()*.5));
+												o.setDX(o.getDX()*.5);
+												o.setDY(o.getDY()*.5);
 											}else{
 												o2.setDX(o2.getDX()+(o.getDX()*.4));
 												o2.setDY(o2.getDY()+(o.getDY()*.4));
 												o.setDX(o.getDX()*.6);
 												o.setDY(o.getDY()*.6);
-												}
+											}
 										}
 									}
 								}
 								
 								//check for player hit
-								if(o.getBounds().intersects(player.getBounds()))
+								if(o.getBounds().intersects(player.getBounds())){
 								sprites.remove(player);
-								
+								if(livesLeft-->0)
+								respawn();
+								}
 							}
 							
 							
@@ -287,7 +291,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 
 
 					try{
-					//	Thread.sleep(1);
+						Thread.sleep(1);
 					}catch(Exception e) { }
 				}
 			}
@@ -295,6 +299,21 @@ public class AstroidScreen extends JPanel implements Runnable{
 		boundCheck.start();
 		addAsteroid.start();
 		manage.start();
+	}
+	void respawn(){
+		player = new Ship(W/2,H/2);
+		Rectangle spawnRegion = new Rectangle((int)(W*.3),(int)(H*.3),(int)(W*.3),(int)(H*.3));
+		synchronized(sprites){
+			for(int index = sprites.size()-1; index >= 0; index--){
+				if(sprites.get(index) instanceof Asteroid){
+				if(sprites.get(index).getBounds().intersects(spawnRegion.getBounds())){
+					sprites.remove(index);
+				}
+				}
+			}
+		sprites.add(player);
+
+		}
 	}
 	void panel(){
 		JFrame frame = new JFrame();
@@ -340,6 +359,13 @@ public class AstroidScreen extends JPanel implements Runnable{
 	}
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
+		
+		
+		int xBuffer = 10;
+		for(int index = 0; index < livesLeft; index++){
+			g.drawImage(Texture.ship.getScaledInstance(Texture.ship.getWidth()*2, Texture.ship.getHeight()*2, Image.SCALE_DEFAULT), xBuffer+=Texture.ship.getWidth()*2, 10,Texture.ship.getWidth()*2,Texture.ship.getHeight()*2, null);
+		}
+		
 		for(int index = 0; index < sprites.size(); index++){
 			GameObject o = sprites.get(index);
 			o.draw(g);

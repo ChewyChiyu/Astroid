@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
@@ -56,7 +57,7 @@ public class Asteroid extends GameObject{
 		g2d.rotate(angle);
 		g2d.drawImage(img, -W/2 ,-H/2, W, H, null);
 		g2d.setTransform(a);
-//		g2d.setColor(Color.WHITE);
+		//g2d.setColor(Color.WHITE);
 //		g2d.drawString("dx " +dx + " dy " + dy, (int)x, (int)y);
 //		g2d.draw(r);
 	}
