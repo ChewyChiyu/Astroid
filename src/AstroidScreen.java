@@ -121,6 +121,9 @@ public class AstroidScreen extends JPanel implements Runnable{
 		gameLoop = true;
 		game.start();
 		manageThread();
+
+		sprites.add(new Enemy(500,100));
+
 	}
 	void manageThread(){
 		Thread manage = new Thread(new Runnable(){
@@ -136,7 +139,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 								}
 							}
 
-							if(o instanceof Ship){
+							if(o instanceof Ship || o instanceof Enemy){
 								if(o.getX()<0){
 									o.x = W;
 								}
@@ -231,17 +234,20 @@ public class AstroidScreen extends JPanel implements Runnable{
 				while(gameLoop){
 					synchronized(sprites){
 						for(int index = 0; index < sprites.size(); index++){
-							if(sprites.get(index) instanceof Asteroid){
-								Asteroid o = (Asteroid) sprites.get(index);
-								//asteroid bounce check
+							GameObject o = sprites.get(index);
+
+							//check with asteroids
+							if(o instanceof Asteroid || o instanceof Enemy){
+								//collision check
 								for(int index2 = 0; index2 < sprites.size(); index2++){
-									if(sprites.get(index2) instanceof Asteroid){
-										Asteroid o2 = (Asteroid) sprites.get(index2);
-										if(o.equals(o2)){
-											continue;
-										}
-										if(o.getBounds().intersects(o2.getBounds()) || o2.getBounds().intersects(o.getBounds()) ){		
-											if (o.big&&!o2.big){
+									GameObject o2 = sprites.get(index2);
+									if(o2.equals(o)){
+										continue;
+									}
+									//asteroid vs asteroid 
+									if(o2 instanceof Asteroid){
+										if(o.getBounds().intersects(o2.getBounds())){
+											if (((Asteroid)o).big&&!((Asteroid)o2).big){
 												o2.setDX(o2.getDX()+(o.getDX()*.5));
 												o2.setDY(o2.getDY()+(o.getDY()*.5));
 												o.setDX(o.getDX()*.5);
@@ -252,42 +258,72 @@ public class AstroidScreen extends JPanel implements Runnable{
 												o.setDX(o.getDX()*.6);
 												o.setDY(o.getDY()*.6);
 											}
+
+										}
+									}
+									if(o2 instanceof Enemy){
+										if(o.getBounds().intersects(o2.getBounds())){
+										o2.setDX(o2.getDX()+(o.getDX()*.4));
+										o2.setDY(o2.getDY()+(o.getDY()*.4));
+										o.setDX(o.getDX()*.6);
+										o.setDY(o.getDY()*.6);
+										}
+									}
+									//asteroid vs ship
+									if(o2 instanceof Ship){
+										if(o.getBounds().intersects(o2.getBounds())){
+											sprites.remove(player);
+											if(livesLeft-->0){
+												respawn();
+											}
 										}
 									}
 								}
-								
-								//check for player hit
-								if(o.getBounds().intersects(player.getBounds())){
-								sprites.remove(player);
-								if(livesLeft-->0)
-								respawn();
-								}
+
+
+
 							}
+							
 							
 							
 							//laser detection
-							if(sprites.get(index) instanceof Projectile){
-								Projectile p = (Projectile) sprites.get(index);
+							if(o instanceof Projectile){
 								for(int index2 = 0; index2 < sprites.size(); index2++){
-									if(sprites.get(index2) instanceof Asteroid){
-										Asteroid a = (Asteroid) sprites.get(index2);
-										if(p.getBounds().intersects(a.getBounds())){
-											sprites.remove(p);
-											if(a.big){
-											sprites.add(new Asteroid(a.getX()+a.W/2,a.getY(),a.getDX(),a.getDY(),false,a.img));
-											sprites.add(new Asteroid(a.getX(),a.getY(),a.getDX(),a.getDY(),false,a.img));
-											}
-											sprites.remove(a);
+									GameObject o2 = sprites.get(index2);
+									if(o.equals(o2)){
+										continue;
+									}
+									if(o2 instanceof Asteroid || o2 instanceof Enemy){
+										if(o.getBounds().intersects(o2.getBounds())){
+											sprites.remove(o2);
+											sprites.remove(o);
 											score+=200;
 										}
 									}
+									
 								}
 							}
 							
-							
-							
-							
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 						}
+
+
+
 					}
 
 
@@ -297,6 +333,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 					}catch(Exception e) { }
 				}
 			}
+
 		});
 		boundCheck.start();
 		addAsteroid.start();
@@ -308,12 +345,12 @@ public class AstroidScreen extends JPanel implements Runnable{
 		synchronized(sprites){
 			for(int index = sprites.size()-1; index >= 0; index--){
 				if(sprites.get(index) instanceof Asteroid){
-				if(sprites.get(index).getBounds().intersects(spawnRegion.getBounds())){
-					sprites.remove(index);
-				}
+					if(sprites.get(index).getBounds().intersects(spawnRegion.getBounds())){
+						sprites.remove(index);
+					}
 				}
 			}
-		sprites.add(player);
+			sprites.add(player);
 
 		}
 	}
@@ -342,7 +379,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 		move();
 		repaint();
 	}
-	
+
 	int numberOfAsteroids(){
 		int index = 0;
 		for(int a = 0; a < sprites.size(); a++){
@@ -361,22 +398,22 @@ public class AstroidScreen extends JPanel implements Runnable{
 	}
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		
-		
+
+
 		int xBuffer = 10;
 		for(int index = 0; index < livesLeft; index++){
 			g.drawImage(Texture.ship.getScaledInstance(Texture.ship.getWidth()*2, Texture.ship.getHeight()*2, Image.SCALE_DEFAULT), xBuffer+=Texture.ship.getWidth()*2, 10,Texture.ship.getWidth()*2,Texture.ship.getHeight()*2, null);
 		}
-		
+
 		g.setColor(Color.WHITE);
-		g.setFont(new Font(Font.SANS_SERIF,Font.BOLD,40));
+		g.setFont(new Font("Aerial",Font.PLAIN,40));
 		if(score<99999)
-		g.drawString(""+ score, 50 , 100);
+			g.drawString(""+ score, 50 , 100);
 		else
 			g.drawString("HI", 50 , 100);
 
-		
-		
+
+
 		for(int index = 0; index < sprites.size(); index++){
 			GameObject o = sprites.get(index);
 			o.draw(g);
