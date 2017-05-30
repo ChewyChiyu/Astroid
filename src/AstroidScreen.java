@@ -243,10 +243,10 @@ public class AstroidScreen extends JPanel implements Runnable{
 												o.setDX(o.getDX()*.7);
 												o.setDY(o.getDY()*.7);
 											}else{
-												o.setDX(o.getDX()+(o2.getDX()*.5));
-												o.setDY(o.getDY()+(o2.getDY()*.5));
-												o2.setDX(o2.getDX()*.5);
-												o2.setDY(o2.getDY()*.5);
+												o2.setDX(o2.getDX()+(o.getDX()*.4));
+												o2.setDY(o2.getDY()+(o.getDY()*.4));
+												o.setDX(o.getDX()*.6);
+												o.setDY(o.getDY()*.6);
 												}
 										}
 									}
@@ -287,7 +287,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 
 
 					try{
-						Thread.sleep(1);
+					//	Thread.sleep(1);
 					}catch(Exception e) { }
 				}
 			}
