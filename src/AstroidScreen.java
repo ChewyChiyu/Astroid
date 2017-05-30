@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -20,6 +21,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 	final int H = Toolkit.getDefaultToolkit().getScreenSize().height;
 	final int MAX_ASTEROID = 30;
 	int livesLeft = 5;
+	int score = 0;
 	Ship player = new Ship(W/2,H/2);
 	protected static ArrayList<GameObject> sprites = new ArrayList<GameObject>();
 
@@ -276,7 +278,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 											sprites.add(new Asteroid(a.getX(),a.getY(),a.getDX(),a.getDY(),false,a.img));
 											}
 											sprites.remove(a);
-											
+											score+=200;
 										}
 									}
 								}
@@ -365,6 +367,15 @@ public class AstroidScreen extends JPanel implements Runnable{
 		for(int index = 0; index < livesLeft; index++){
 			g.drawImage(Texture.ship.getScaledInstance(Texture.ship.getWidth()*2, Texture.ship.getHeight()*2, Image.SCALE_DEFAULT), xBuffer+=Texture.ship.getWidth()*2, 10,Texture.ship.getWidth()*2,Texture.ship.getHeight()*2, null);
 		}
+		
+		g.setColor(Color.WHITE);
+		g.setFont(new Font(Font.SANS_SERIF,Font.BOLD,40));
+		if(score<99999)
+		g.drawString(""+ score, 50 , 100);
+		else
+			g.drawString("HI", 50 , 100);
+
+		
 		
 		for(int index = 0; index < sprites.size(); index++){
 			GameObject o = sprites.get(index);

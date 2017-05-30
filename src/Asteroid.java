@@ -57,7 +57,7 @@ public class Asteroid extends GameObject{
 		g2d.rotate(angle);
 		g2d.drawImage(img, -W/2 ,-H/2, W, H, null);
 		g2d.setTransform(a);
-		//g2d.setColor(Color.WHITE);
+		//1g2d.setColor(Color.WHITE);
 //		g2d.drawString("dx " +dx + " dy " + dy, (int)x, (int)y);
 //		g2d.draw(r);
 	}
