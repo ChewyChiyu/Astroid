@@ -1,14 +1,13 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
 public class Ship extends GameObject{
 	final int W = Texture.ship.getWidth()*2;
 	final int H = Texture.ship.getHeight()*2;
-	final int SPEED = 9;
-	final double ACCEL = .02;
+	final int SPEED = 5;
+	final double ACCEL = .01;
 	final double FRICTION = ACCEL;
 	protected double angle = 0;
 
@@ -75,7 +74,7 @@ public class Ship extends GameObject{
 		motion.start();
 	}
 	void shoot(){
-		AstroidScreen.sprites.add(new Projectile(x+W/2,y+(H*.3),angle,SPEED*Math.sin(angle),-SPEED*Math.cos(angle)));
+		AstroidScreen.sprites.add(new Projectile(x+W/2,y+(H*.3),angle,SPEED*Math.sin(angle)*2,-SPEED*Math.cos(angle)*2));
 	}
 	@Override
 	void draw(Graphics g) {
@@ -86,10 +85,6 @@ public class Ship extends GameObject{
 		g2d.drawImage(Texture.ship.getScaledInstance(Texture.ship.getWidth()*2, Texture.ship.getHeight()*2, Image.SCALE_DEFAULT),  - W/2,  - H/2, null);
 		g2d.setTransform(a);
 	}
-	@Override
-	Rectangle getBounds() {
-		r.setLocation((int)x, (int)y);
-		return r;
-	}
+	
 
 }

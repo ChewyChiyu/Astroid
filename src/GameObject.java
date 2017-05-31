@@ -1,9 +1,8 @@
 import java.awt.Graphics;
-import java.awt.Rectangle;
 
 public abstract class GameObject {
 	double x,y,dx,dy;
-	Rectangle r = new Rectangle();
+	BorderMask r = new BorderMask();
 	protected GameObject(double x, double y){
 		this.x = x ;
 		this.y = y;
@@ -36,7 +35,10 @@ public abstract class GameObject {
 		x += dx;
 		y += dy;
 	}
-	abstract Rectangle getBounds();
+	BorderMask getMask(){
+		r.setLocation((int)x, (int)y);
+			return r;
+	}
 	abstract void draw(Graphics g);
 	
 }

@@ -1,8 +1,7 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
@@ -27,11 +26,7 @@ public class Asteroid extends GameObject{
 			W = (int) (img.getWidth()*.7);
 			H = (int) (img.getHeight()*.7);
 		}
-		if(big){
-			r.setSize(W-8, H-8);
-		}else{
-			r.setSize(W-15, H-15);
-		}
+		r.setSize(W, H);
 		Thread motion = new Thread(new Runnable(){
 			public void run(){
 				while(this!=null){
@@ -57,19 +52,15 @@ public class Asteroid extends GameObject{
 		g2d.rotate(angle);
 		g2d.drawImage(img, -W/2 ,-H/2, W, H, null);
 		g2d.setTransform(a);
-		//1g2d.setColor(Color.WHITE);
-//		g2d.drawString("dx " +dx + " dy " + dy, (int)x, (int)y);
-//		g2d.draw(r);
+		//g2d.setColor(Color.WHITE);
+		//g.setFont(new Font("Aerial",Font.BOLD,20));
+		//g2d.drawString("dx " +(float)dx + " dy " + (float)dy, (int)x, (int)y);
+		//r.draw(g2d);
 	}
 
-	@Override
-	Rectangle getBounds(){
-		if(!big)
-			r.setLocation((int)x+7, (int)y+7);
-		else
-			r.setLocation((int)x+4, (int)y+4);
-		return r;
-	}
+	
+
+	
 
 
 

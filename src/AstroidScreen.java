@@ -3,7 +3,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -245,47 +244,41 @@ public class AstroidScreen extends JPanel implements Runnable{
 										continue;
 									}
 									//asteroid vs asteroid 
-									if(o2 instanceof Asteroid){
-										if(o.getBounds().intersects(o2.getBounds())){
-											if (((Asteroid)o).big&&!((Asteroid)o2).big){
-												o2.setDX(o2.getDX()+(o.getDX()*.5));
-												o2.setDY(o2.getDY()+(o.getDY()*.5));
-												o.setDX(o.getDX()*.5);
-												o.setDY(o.getDY()*.5);
-											}else{
-												o2.setDX(o2.getDX()+(o.getDX()*.4));
-												o2.setDY(o2.getDY()+(o.getDY()*.4));
-												o.setDX(o.getDX()*.6);
-												o.setDY(o.getDY()*.6);
-											}
+									if(o2 instanceof Asteroid ){
+										if(o.getMask().isTouching(o2.getMask())){
+
+											o2.setDX(o2.getDX()+(o.getDX()*.4));
+											o2.setDY(o2.getDY()+(o.getDY()*.4));
+											o.setDX(o.getDX()*.6);
+											o.setDY(o.getDY()*.6);
 
 										}
 									}
 									if(o2 instanceof Enemy){
-										if(o.getBounds().intersects(o2.getBounds())){
-										o2.setDX(o2.getDX()+(o.getDX()*.4));
-										o2.setDY(o2.getDY()+(o.getDY()*.4));
-										o.setDX(o.getDX()*.6);
-										o.setDY(o.getDY()*.6);
+										if(o.getMask().isTouching(o2.getMask())){
+											o2.setDX(o2.getDX()+(o.getDX()*.4));
+											o2.setDY(o2.getDY()+(o.getDY()*.4));
+											o.setDX(o.getDX()*.6);
+											o.setDY(o.getDY()*.6);
 										}
 									}
 									//asteroid vs ship
 									if(o2 instanceof Ship){
-										if(o.getBounds().intersects(o2.getBounds())){
+										if(o.getMask().isTouching(o2.getMask())){
 											sprites.remove(player);
 											if(livesLeft-->0){
 												respawn();
 											}
+
 										}
 									}
+
+
+
 								}
 
-
-
 							}
-							
-							
-							
+
 							//laser detection
 							if(o instanceof Projectile){
 								for(int index2 = 0; index2 < sprites.size(); index2++){
@@ -294,41 +287,24 @@ public class AstroidScreen extends JPanel implements Runnable{
 										continue;
 									}
 									if(o2 instanceof Asteroid || o2 instanceof Enemy){
-										if(o.getBounds().intersects(o2.getBounds())){
+										if(o.getMask().isTouching(o2.getMask())){
 											//only respawns Asteroids if big
 											if(o2 instanceof Asteroid && ((Asteroid)o2).big){
 												sprites.add(new Asteroid(o2.getX()+((Asteroid)o2).W, o2.getY(), o2.getDX()/2, o2.getDY()/2, false, ((Asteroid)o2).img));
 												sprites.add(new Asteroid(o2.getX(), o2.getY(), o2.getDX()/2, o2.getDY()/2, false, ((Asteroid)o2).img));
 
-												
+
 											}
-											
-											
+
+
 											sprites.remove(o2);
 											sprites.remove(o);
 											score+=200;
 										}
 									}
-									
+
 								}
 							}
-							
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 						}
 
 
@@ -350,11 +326,13 @@ public class AstroidScreen extends JPanel implements Runnable{
 	}
 	void respawn(){
 		player = new Ship(W/2,H/2);
-		Rectangle spawnRegion = new Rectangle((int)(W*.3),(int)(H*.3),(int)(W*.3),(int)(H*.3));
+		BorderMask spawnRegion = new BorderMask();
+		spawnRegion.setLocation((int)(W*.3),(int)(H*.3));
+		spawnRegion.setSize((int)(W*.3),(int)(H*.3));
 		synchronized(sprites){
 			for(int index = sprites.size()-1; index >= 0; index--){
 				if(sprites.get(index) instanceof Asteroid){
-					if(sprites.get(index).getBounds().intersects(spawnRegion.getBounds())){
+					if(sprites.get(index).getMask().isTouching(spawnRegion)){
 						sprites.remove(index);
 					}
 				}

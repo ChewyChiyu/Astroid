@@ -1,6 +1,5 @@
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Rectangle;
 
 public class Enemy extends GameObject{
 	protected final int W = Texture.enemy.getWidth();
@@ -8,16 +7,11 @@ public class Enemy extends GameObject{
 
 	protected Enemy(double x, double y) {
 		super(x, y);
-		r.setSize(W,H);
+		r.setSize(W, H);
 		dx = 1;
 		dy = 1;
 	}
 
-	@Override
-	Rectangle getBounds() {
-		r.setLocation((int)x, (int)y);
-		return r;
-	}
 
 	@Override
 	void draw(Graphics g) {
