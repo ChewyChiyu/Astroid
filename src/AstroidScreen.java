@@ -247,8 +247,8 @@ public class AstroidScreen extends JPanel implements Runnable{
 									if(o2 instanceof Asteroid && o instanceof Asteroid){
 										Asteroid A = (Asteroid) o;
 										Asteroid B = (Asteroid) o2;
-										A.getMask();
-										B.getMask();
+//										A.getMask();
+//										B.getMask();
 											int xDist = A.getCenterX() - B.getCenterX();
 								            int yDist = A.getCenterY() - B.getCenterY();
 								            double distSquared = xDist*xDist + yDist*yDist;
