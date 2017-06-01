@@ -37,7 +37,7 @@ public abstract class GameObject {
 	}
 	BorderMask getMask(){
 		r.setLocation((int)x, (int)y);
-			return r;
+		return r;
 	}
 	abstract void draw(Graphics g);
 	

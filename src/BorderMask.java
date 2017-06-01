@@ -17,12 +17,14 @@ public class BorderMask {
 	
 	void draw(Graphics g){
 		g.setColor(Color.WHITE);
-		g.drawRect(x, y, W, H);
+		g.drawOval(x, y, W, H);
 	}
 	boolean isTouching(BorderMask b){	
-		  if ((x < b.x + b.W && x + W > b.x && y < b.y + b.H && y + H > b.y)){
-			  return true;
-		  }
-		  return false;
+			double deltaX = (x+W/2)-(b.x+b.W/2);
+			double deltaY = (y+H/2)-(b.y+b.H/2);
+			double distanceSquared = deltaX * deltaX + deltaY * deltaY;
+			boolean collision = distanceSquared < (W/2 + b.W/2) * ((W/2 + b.W/2));
+			return collision;
+
 	}
 }

@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 public class Asteroid extends GameObject{
 	protected int W;
 	protected int H;
+	protected int mass;
 	protected int type;
 	boolean big;
 	protected BufferedImage img;
@@ -22,9 +23,11 @@ public class Asteroid extends GameObject{
 		if(big){
 			W = (int) (img.getWidth()*1.2);
 			H = (int) (img.getHeight()*1.2);
+			mass = 100;
 		}else{
 			W = (int) (img.getWidth()*.7);
 			H = (int) (img.getHeight()*.7);
+			mass = 50;
 		}
 		r.setSize(W, H);
 		Thread motion = new Thread(new Runnable(){
@@ -52,13 +55,17 @@ public class Asteroid extends GameObject{
 		g2d.rotate(angle);
 		g2d.drawImage(img, -W/2 ,-H/2, W, H, null);
 		g2d.setTransform(a);
-		//g2d.setColor(Color.WHITE);
-		//g.setFont(new Font("Aerial",Font.BOLD,20));
-		//g2d.drawString("dx " +(float)dx + " dy " + (float)dy, (int)x, (int)y);
-		//r.draw(g2d);
+//		g2d.setColor(Color.WHITE);
+//		g.setFont(new Font("Aerial",Font.BOLD,20));
+//		g2d.drawString("dx " +(float)dx + " dy " + (float)dy, (int)x, (int)y);
+//		r.draw(g2d);
 	}
-
-	
+	int getCenterX(){
+		return (int)x+W/2;
+	}
+	int getCenterY(){
+		return (int)y+H/2;
+	}
 
 	
 

@@ -244,15 +244,35 @@ public class AstroidScreen extends JPanel implements Runnable{
 										continue;
 									}
 									//asteroid vs asteroid 
-									if(o2 instanceof Asteroid ){
-										if(o.getMask().isTouching(o2.getMask())){
-
-											o2.setDX(o2.getDX()+(o.getDX()*.4));
-											o2.setDY(o2.getDY()+(o.getDY()*.4));
-											o.setDX(o.getDX()*.6);
-											o.setDY(o.getDY()*.6);
-
-										}
+									if(o2 instanceof Asteroid && o instanceof Asteroid){
+										Asteroid A = (Asteroid) o;
+										Asteroid B = (Asteroid) o2;
+										A.getMask();
+										B.getMask();
+											int xDist = A.getCenterX() - B.getCenterX();
+								            int yDist = A.getCenterY() - B.getCenterY();
+								            double distSquared = xDist*xDist + yDist*yDist;
+								            //Check the squared distances instead of the the distances, same result, but avoids a square root.
+								            if(distSquared <= (A.W/2 + B.W/2)*(A.W/2 + B.W/2)){
+								                double xVelocity = B.dx - A.dx;
+								                double yVelocity = B.dy - A.dy;
+								                double dotProduct = xDist*xVelocity + yDist*yVelocity;
+								                //Neat vector maths, used for checking if the objects moves towards one another.
+								                if(dotProduct > 0){
+								                    double collisionScale = dotProduct / distSquared;
+								                    double xCollision = xDist * collisionScale;
+								                    double yCollision = yDist * collisionScale;
+								                    //The Collision vector is the speed difference projected on the Dist vector,
+								                    //thus it is the component of the speed difference needed for the collision.
+								                    double combinedMass = A.mass + B.mass;
+								                    double collisionWeightA = 2 * B.mass / combinedMass;
+								                    double collisionWeightB = 2 * A.mass / combinedMass;
+								                    A.dx += collisionWeightA * xCollision;
+								                    A.dy += collisionWeightA * yCollision;
+								                    B.dx -= collisionWeightB * xCollision;
+								                    B.dy -= collisionWeightB * yCollision;
+								                }
+								            }
 									}
 									if(o2 instanceof Enemy){
 										if(o.getMask().isTouching(o2.getMask())){
@@ -292,8 +312,6 @@ public class AstroidScreen extends JPanel implements Runnable{
 											if(o2 instanceof Asteroid && ((Asteroid)o2).big){
 												sprites.add(new Asteroid(o2.getX()+((Asteroid)o2).W, o2.getY(), o2.getDX()/2, o2.getDY()/2, false, ((Asteroid)o2).img));
 												sprites.add(new Asteroid(o2.getX(), o2.getY(), o2.getDX()/2, o2.getDY()/2, false, ((Asteroid)o2).img));
-
-
 											}
 
 
@@ -306,13 +324,7 @@ public class AstroidScreen extends JPanel implements Runnable{
 								}
 							}
 						}
-
-
-
 					}
-
-
-
 					try{
 						Thread.sleep(1);
 					}catch(Exception e) { }
